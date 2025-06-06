@@ -183,7 +183,7 @@ export default class TradeV2 extends ModuleBase {
     const txBuilder = this.createTxBuilder(feePayer);
     const amountIn = swapInfo.amountIn;
     const amountOut = swapInfo.amountOut;
-    const useSolBalance = amountIn.amount.token.mint.equals(WSOLMint);
+    const createATA = true;
     const isOutputSol = amountOut.amount.token.mint.equals(WSOLMint);
     const inputMint = amountIn.amount.token.mint;
     const outputMint = amountOut.amount.token.mint;
@@ -192,16 +192,16 @@ export default class TradeV2 extends ModuleBase {
       await this.scope.account.getOrCreateTokenAccount({
         tokenProgram: amountIn.amount.token.isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
         mint: inputMint,
-        notUseTokenAccount: useSolBalance,
+        notUseTokenAccount: createATA,
         owner: this.scope.ownerPubKey,
-        skipCloseAccount: !useSolBalance,
-        createInfo: useSolBalance
+        skipCloseAccount: !createATA,
+        createInfo: createATA
           ? {
               payer: this.scope.ownerPubKey,
               amount: amountIn.amount.raw,
             }
           : undefined,
-        associatedOnly: useSolBalance ? false : ownerInfo.associatedOnly,
+        associatedOnly: createATA ? false : ownerInfo.associatedOnly,
         checkCreateATAOwner: ownerInfo.checkCreateATAOwner,
       });
 
